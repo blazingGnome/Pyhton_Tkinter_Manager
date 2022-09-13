@@ -1,6 +1,8 @@
 import tkinter as tk
 from  tkinter import  messagebox
 from tkinter import filedialog as fd
+from PIL import ImageTk, Image
+
 arr = []
 
 class GUI:
@@ -10,6 +12,10 @@ class GUI:
         self.root.title("tkinter window")
         self.root.geometry("700x500")
         self.root.resizable(False, False)
+        self.root.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/Plar.jpg')
+        self.root.bck_end = ImageTk.PhotoImage(self.root.image_0)
+        self.lbl = tk.Label(self.root, image=self.root.bck_end)
+        self.lbl.place(x=0, y=0)
 
         self.menubar = tk.Menu(self.root)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
