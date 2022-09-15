@@ -1,5 +1,5 @@
 import tkinter as tk
-from  tkinter import  messagebox
+from tkinter import messagebox
 from tkinter import filedialog as fd
 from PIL import ImageTk, Image
 
@@ -12,10 +12,14 @@ class GUI:
         self.root.title("tkinter window")
         self.root.geometry("700x500")
         self.root.resizable(False, False)
-        self.root.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/Plar.jpg')
+
+        self.root.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/kirby.jpg')
         self.root.bck_end = ImageTk.PhotoImage(self.root.image_0)
         self.lbl = tk.Label(self.root, image=self.root.bck_end)
         self.lbl.place(x=0, y=0)
+
+        self.root.img= ImageTk.PhotoImage(file='C:/Users/User/Pictures/Camera Roll/Dor/pumpkin.png')
+        self.root.iconphoto(False, self.root.img)
 
         self.menubar = tk.Menu(self.root)
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
@@ -26,11 +30,11 @@ class GUI:
         self.menubar.add_cascade(menu=self.filemenu, label="File")
         self.root.config(menu=self.menubar)
 
-        self.label = tk.Label(self.root, text="Message_Manager", font=('Times New Roman', 20))
-        self.label.pack(padx=10, pady=10)
+        #self.label = tk.Label(self.root, text="Message_Manager", font=('Times New Roman', 20))
+        #self.label.pack(padx=10, pady=10)
 
         self.textBox = tk.Text(self.root, height=6, font=('Times New Roman', 16))
-        self.textBox.pack(padx=10,pady=10)
+        self.textBox.pack(padx=10,pady=50)
 
         self.check_state = tk.IntVar()
 
@@ -65,6 +69,8 @@ class GUI:
         if self.check_state.get() != 0:
             #print(self.textBox.get("1.0", tk.END))
             messagebox.showinfo(title="Message", message=self.textBox.get('1.0', tk.END))
+        else:
+            messagebox.showinfo(title="Error", message='Error, You did not check the check box' )
     def Save_Message(self):
         arr.append(self.textBox.get('1.0', tk.END)[:-1])
     def Arr_Message(self):
