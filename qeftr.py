@@ -2,8 +2,44 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from PIL import ImageTk, Image
+from itertools import count
+
 
 arr = []
+class ImageLabel(tk.Label):
+    def load(self, im):
+        if isinstance(im, str):
+            im = Image.open(im)
+        self.loc = 0
+        self.frames = []
+
+        try:
+            for i in count(1):
+                self.frames.append(ImageTk.PhotoImage(im.copy()))
+                im.seek(i)
+        except EOFError:
+            pass
+
+        try:
+            self.delay = im.info['duration']
+        except:
+            self.delay = 100
+
+        if len(self.frames) == 1:
+            self.config(image=self.frames[0])
+        else:
+            self.next_frame()
+
+    def unload(self):
+        self.config(image="")
+        self.frames = None
+
+    def next_frame(self):
+        if self.frames:
+            self.loc += 2
+            self.loc %= len(self.frames)
+            self.config(image=self.frames[self.loc])
+            self.after(self.delay, self.next_frame)
 
 class GUI:
 
@@ -112,17 +148,23 @@ class GUI:
         text_file.write(self.textBox.get(1.0, tk.END))
 
     def openNewWindow(self):
-        self.newWindow = tk.Toplevel()
-        self.newWindow.title("Image")
-        self.newWindow.geometry("550x550")
-
-        tk.Label(self.newWindow).pack()
-        filepath = fd.askopenfilename(title="Open file", filetypes=(("images", "*.png"), ("all files", "*.*"), ("images", "*.jpg")))
+        filepath = fd.askopenfilename(title="Open file", filetypes=(("images", "*.png"), ("all files", "*.*"), ("images", "*.jpg"),
+                                                                    ("Gifs", "*.gif")))
         text_file = open(filepath, "rt")
         text_file.close()
+
+        self.newWindow = tk.Toplevel()
+        self.newWindow.title("Image")
         self.newWindow.image_0 = Image.open(filepath)
-        self.newWindow.bck_end = ImageTk.PhotoImage(self.newWindow.image_0)
-        self.newWindow.lbl = tk.Label(self.newWindow, image=self.newWindow.bck_end)
-        self.newWindow.lbl.place(x=0, y=0)
+        width, height = self.newWindow.image_0.size
+        self.newWindow.geometry(f"{width}x{height}")
+        #tk.Label(self.newWindow).pack()
+        self.newWindow.label = ImageLabel(self.newWindow)
+        self.newWindow.label.pack()
+        self.newWindow.label.load(filepath)
+
+        #self.newWindow.bck_end = ImageTk.PhotoImage(self.newWindow.image_0)
+        #self.newWindow.lbl = tk.Label(self.newWindow, image=self.newWindow.bck_end)
+        #self.newWindow.lbl.place(x=0, y=0)
 
 GUI()
