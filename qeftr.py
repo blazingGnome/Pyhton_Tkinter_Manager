@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import filedialog as fd
 from PIL import ImageTk, Image
 from itertools import count
-
+import pygame
 
 arr = []
 class ImageLabel(tk.Label):
@@ -98,16 +98,18 @@ class GUI:
         self.btn.pack(padx=10, pady=20)
         self.btn.place(x=560, y=375)
 
-        self.btn = tk.Button(self.root, text='open image', font=('Times New Roman', 16), command=self.openNewWindow)
-        self.btn.pack(padx=10, pady=20)
-        self.btn.place(x=10, y=375)
+        self.btn1 = tk.Button(self.root, text='open image', font=('Times New Roman', 16), command=self.openNewWindow)
+        self.btn1.pack(padx=10, pady=20)
+        self.btn1.place(x=10, y=375)
+
+        self.btn2 = tk.Button(self.root, text='sound', font=('Times New Roman', 16), command=self.show_sound)
+        self.btn2.pack(padx=10, pady=20)
+        self.btn2.place(x=10, y=330)
         self.root.mainloop()
 
     def show_message(self):
-        #print(self.check_state.get())
         global arr
         if self.check_state.get() != 0:
-            #print(self.textBox.get("1.0", tk.END))
             messagebox.showinfo(title="Message", message=self.textBox.get('1.0', tk.END))
         else:
             messagebox.showinfo(title="Error", message='Error, You did not check the check box' )
@@ -148,13 +150,14 @@ class GUI:
         text_file.write(self.textBox.get(1.0, tk.END))
 
     def openNewWindow(self):
-        filepath = fd.askopenfilename(title="Open file", filetypes=(("images", "*.png"), ("all files", "*.*"), ("images", "*.jpg"),
+        filepath = fd.askopenfilename(title="Open file", filetypes=(("all files", "*.*"), ("images", "*.png"), ("images", "*.jpg"),
                                                                     ("Gifs", "*.gif")))
         text_file = open(filepath, "rt")
         text_file.close()
 
         self.newWindow = tk.Toplevel()
-        self.newWindow.title("Image")
+        Image_Name = str(filepath).split('/')[-1]
+        self.newWindow.title(Image_Name)
         self.newWindow.image_0 = Image.open(filepath)
         width, height = self.newWindow.image_0.size
         self.newWindow.geometry(f"{width}x{height}")
@@ -163,8 +166,27 @@ class GUI:
         self.newWindow.label.pack()
         self.newWindow.label.load(filepath)
 
-        #self.newWindow.bck_end = ImageTk.PhotoImage(self.newWindow.image_0)
-        #self.newWindow.lbl = tk.Label(self.newWindow, image=self.newWindow.bck_end)
-        #self.newWindow.lbl.place(x=0, y=0)
+    def show_sound(self):
+        filepath = fd.askopenfilename(title="Open file", filetypes=(("music", "*.mp3"), ("all files", "*.*")))
+        text_file = open(filepath, "rt")
+        text_file.close()
+        self.window = tk.Toplevel()
+        self.window.title("sound")
+        self.window.geometry("500x400")
+        pygame.mixer.init()
+        def play():
+            pygame.mixer.music.load(filepath)
+            pygame.mixer.music.play()
 
+        def stop():
+            pygame.mixer.music.stop()
+
+        self.window.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/splatoon.jpg')
+        self.window.bck_end = ImageTk.PhotoImage(self.window.image_0)
+        self.lbl = tk.Label(self.window, image=self.window.bck_end)
+        self.lbl.place(x=0, y=0)
+        self.window.btn1 = tk.Button(self.window, text="play", font=("Arial", 32), command=play)
+        self.window.btn1.pack(pady=20)
+        self.window.btn2 = tk.Button(self.window, text="Stop", font=("Arial", 20), command=stop)
+        self.window.btn2.pack(pady=20)
 GUI()
