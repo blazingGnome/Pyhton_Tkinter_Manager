@@ -9,7 +9,7 @@ class GUI:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("tkinter window")
+        self.root.title("Message Manager")
         self.root.geometry("700x500")
         self.root.resizable(False, False)
 
@@ -61,6 +61,10 @@ class GUI:
         self.btn = tk.Button(self.root, text='Save as file', font=('Times New Roman', 16), command=self.saveButton)
         self.btn.pack(padx=10, pady=20)
         self.btn.place(x=560, y=375)
+
+        self.btn = tk.Button(self.root, text='open image', font=('Times New Roman', 16), command=self.openNewWindow)
+        self.btn.pack(padx=10, pady=20)
+        self.btn.place(x=10, y=375)
         self.root.mainloop()
 
     def show_message(self):
@@ -106,6 +110,19 @@ class GUI:
         filepath = fd.askopenfilename(title="Open file", filetypes=(("text files", "*.txt"), ("all files", "*.*")))
         text_file = open(filepath, 'wt')
         text_file.write(self.textBox.get(1.0, tk.END))
-#my_text = tk.Text(tk.Tk(), width=40, height=10,)
-#my_text.pack(pady=20)
+
+    def openNewWindow(self):
+        self.newWindow = tk.Toplevel()
+        self.newWindow.title("Image")
+        self.newWindow.geometry("550x550")
+
+        tk.Label(self.newWindow).pack()
+        filepath = fd.askopenfilename(title="Open file", filetypes=(("images", "*.png"), ("all files", "*.*"), ("images", "*.jpg")))
+        text_file = open(filepath, "rt")
+        text_file.close()
+        self.newWindow.image_0 = Image.open(filepath)
+        self.newWindow.bck_end = ImageTk.PhotoImage(self.newWindow.image_0)
+        self.newWindow.lbl = tk.Label(self.newWindow, image=self.newWindow.bck_end)
+        self.newWindow.lbl.place(x=0, y=0)
+
 GUI()
