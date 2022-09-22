@@ -4,8 +4,10 @@ from tkinter import filedialog as fd
 from PIL import ImageTk, Image
 from itertools import count
 import pygame
+from tkvideo import *
 
 arr = []
+
 class ImageLabel(tk.Label):
     def load(self, im):
         if isinstance(im, str):
@@ -36,7 +38,7 @@ class ImageLabel(tk.Label):
 
     def next_frame(self):
         if self.frames:
-            self.loc += 2
+            self.loc +=2
             self.loc %= len(self.frames)
             self.config(image=self.frames[self.loc])
             self.after(self.delay, self.next_frame)
@@ -46,8 +48,13 @@ class GUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Message Manager")
-        self.root.geometry("700x500")
+        #self.root.eval('tk::PlaceWindow . center')
         self.root.resizable(False, False)
+        width = 700
+        height = 500
+        width_res = self.root.winfo_screenwidth()
+        height_res = self.root.winfo_screenheight()
+        self.root.geometry(f"{width}x{height}+{width_res // 2 - width // 2}+{height_res // 2 - height // 2}")
 
         self.root.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/kirby.jpg')
         self.root.bck_end = ImageTk.PhotoImage(self.root.image_0)
@@ -105,6 +112,10 @@ class GUI:
         self.btn2 = tk.Button(self.root, text='sound', font=('Times New Roman', 16), command=self.show_sound)
         self.btn2.pack(padx=10, pady=20)
         self.btn2.place(x=10, y=330)
+
+        self.btn3 = tk.Button(self.root, text='Video', font=('Times New Roman', 15), command=self.video)
+        self.btn3.pack(padx=10, pady=20)
+        self.btn3.place(x=10, y=285)
         self.root.mainloop()
 
     def show_message(self):
@@ -160,8 +171,9 @@ class GUI:
         self.newWindow.title(Image_Name)
         self.newWindow.image_0 = Image.open(filepath)
         width, height = self.newWindow.image_0.size
-        self.newWindow.geometry(f"{width}x{height}")
-        #tk.Label(self.newWindow).pack()
+        width_res = self.newWindow.winfo_screenwidth()
+        height_res = self.newWindow.winfo_screenheight()
+        self.newWindow.geometry(f"{width}x{height}+{width_res // 2 - width // 2}+{height_res // 2 - height // 2}")
         self.newWindow.label = ImageLabel(self.newWindow)
         self.newWindow.label.pack()
         self.newWindow.label.load(filepath)
@@ -170,9 +182,18 @@ class GUI:
         filepath = fd.askopenfilename(title="Open file", filetypes=(("music", "*.mp3"), ("all files", "*.*")))
         text_file = open(filepath, "rt")
         text_file.close()
-        self.window = tk.Toplevel()
-        self.window.title("sound")
-        self.window.geometry("500x400")
+        window = tk.Toplevel()
+        window.title("sound")
+        width = 220
+        height = 235
+        width_res = window.winfo_screenwidth()
+        height_res = window.winfo_screenheight()
+        window.geometry(f"{width}x{height}+{width_res // 2 - width // 2}+{height_res // 2 - height // 2}")
+        window.resizable(False, False)
+        window.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/sound.gif')
+        window.label = ImageLabel(window)
+        window.label.pack()
+        window.label.load('C:/Users/User/Pictures/Camera Roll/Dor/sound.gif')
         pygame.mixer.init()
         def play():
             pygame.mixer.music.load(filepath)
@@ -180,13 +201,22 @@ class GUI:
 
         def stop():
             pygame.mixer.music.stop()
+        window.btn1 = tk.Button(window, text="play", font=("Arial", 17), command=play)
+        window.btn1.pack(pady=10)
+        window.btn1.place(x=81, y=85)
+        window.btn2 = tk.Button(window, text="Stop", font=("Arial", 13), command=stop)
+        window.btn2.pack(pady=9)
+        window.btn2.place(x=88, y=140)
+    def video(self):
+        filepath = fd.askopenfilename(title="Open file", filetypes=(("Vidoes", "*.mp4"), ("all files", "*.*")))
+        text_file = open(filepath, "rt")
+        text_file.close()
+        self.new = tk.Toplevel()
+        Image_Name = str(filepath).split('/')[-1]
+        self.new.title(Image_Name)
+        self.my_label = tk.Label(self.new)
+        self.my_label.pack()
+        self.player = tkvideo(filepath, self.my_label, loop=1, size=(1280, 720))
+        self.player.play()
 
-        self.window.image_0 = Image.open('C:/Users/User/Pictures/Camera Roll/Dor/splatoon.jpg')
-        self.window.bck_end = ImageTk.PhotoImage(self.window.image_0)
-        self.lbl = tk.Label(self.window, image=self.window.bck_end)
-        self.lbl.place(x=0, y=0)
-        self.window.btn1 = tk.Button(self.window, text="play", font=("Arial", 32), command=play)
-        self.window.btn1.pack(pady=20)
-        self.window.btn2 = tk.Button(self.window, text="Stop", font=("Arial", 20), command=stop)
-        self.window.btn2.pack(pady=20)
 GUI()
